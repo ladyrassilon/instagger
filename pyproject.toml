@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "instagger"
+version = "0.1.0"
+description = ""
+authors = ["Gemma Hentsch <gemma@halfapenguin.com>"]
+license = "GNU GENERAL PUBLIC LICENSE 3.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+celery = {extras = ["flower"], version = "^5.3.1"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
