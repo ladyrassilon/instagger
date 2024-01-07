@@ -2,6 +2,7 @@ import math
 import os
 import shutil
 import time
+from datetime import date
 from pathlib import Path
 from uuid import uuid4
 
@@ -29,6 +30,7 @@ def convert_tags_to_hashtags(raw_tags):
     hashtag_text = " ".join(hashtags)
     return hashtag_text
 
+
 class DownloadiCloud(luigi.Task):
     file_path = luigi.Parameter()
     uuid = luigi.Parameter()
@@ -36,6 +38,26 @@ class DownloadiCloud(luigi.Task):
         os.system(f"brctl download {self.file_path}")
     def output(self):
         return luigi.LocalTarget(self.file_path)
+
+
+class AddImageName(luigi.Task):
+    file_path = luigi.Parameter()
+    output_path = luigi.Parameter()
+    output_txt_path = luigi.Parameter()
+    uuid = luigi.Parameter()
+    def run(self):
+        file_contents = ""
+        image_path = Path(self.file_path)
+        if self.output().exists():
+            with self.output().open("r") as txt_file:
+                file_contents = txt_file.read()
+        with self.output().open("w") as txt_file:
+            txt_file.write(file_contents)
+            txt_file.write(f"\nImage Name: {image_path.stem}\n")
+
+    def output(self):
+        return luigi.LocalTarget(self.output_txt_path)
+
 
 class MoveImageToOutputFolder(luigi.Task):
     file_path = luigi.Parameter()
@@ -61,6 +83,7 @@ class GetCameraTags(luigi.Task):
 
     def requires(self):
         yield MoveImageToOutputFolder(file_path=self.file_path, output_path=self.output_path, uuid=self.uuid)
+        yield AddImageName(file_path=self.file_path, output_path=self.output_path, output_txt_path=self.output_txt_path, uuid=self.uuid)
 
     def get_camera_model_tags(self, image_data):
         model_tags = []
@@ -103,12 +126,12 @@ class GetCameraTags(luigi.Task):
     def output(self):
         return luigi.LocalTarget(self.output_txt_path)
 
+
 class GetLensTags(luigi.Task):
     file_path = luigi.Parameter()
     output_path = luigi.Parameter()
     output_txt_path = luigi.Parameter()
     uuid = luigi.Parameter()
-
 
     def get_aperture_tags(self, image_data):
         aperture_tags = []
@@ -144,6 +167,7 @@ class GetLensTags(luigi.Task):
 
     def requires(self):
         yield MoveImageToOutputFolder(file_path=self.file_path, output_path=self.output_path, uuid=self.uuid)
+        yield AddImageName(file_path=self.file_path, output_path=self.output_path, output_txt_path=self.output_txt_path, uuid=self.uuid)
 
     def run(self):
         image_data = get_exif_data(str(self.output_path))
@@ -163,6 +187,7 @@ class GetLensTags(luigi.Task):
     def output(self):
         return luigi.LocalTarget(self.output_txt_path)
 
+
 class AddPersonalTags(luigi.Task):
     file_path = luigi.Parameter()
     output_path = luigi.Parameter()
@@ -171,6 +196,7 @@ class AddPersonalTags(luigi.Task):
 
     def requires(self):
         yield MoveImageToOutputFolder(file_path=self.file_path, output_path=self.output_path, uuid=self.uuid)
+        yield AddImageName(file_path=self.file_path, output_path=self.output_path, output_txt_path=self.output_txt_path, uuid=self.uuid)
 
     def run(self):
         personal_tags = [
@@ -240,6 +266,7 @@ class ProcessImage(luigi.Task):
 
 
 IMAGE_TYPES = ["jpg", "jpeg", "heic"]
+
 
 class OpenImageTest(luigi.Task):
     file_path = luigi.Parameter()
