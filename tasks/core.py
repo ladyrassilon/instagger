@@ -194,27 +194,32 @@ class AddPersonalTags(luigi.Task):
 
 IMAGE_TYPES = ["jpg", "jpeg", "heic"]
 
+
 class ProcessImage(luigi.Task):
     file_path = luigi.Parameter()
     output_path = luigi.Parameter(default="nowhere")
     output_txt_path = luigi.Parameter(default="nowhere")
     def requires(self):
-        image_path = Path(self.file_path)
-        image_dir = image_path.parent
-        output_dir = image_dir / "tagged"
-        self.output_path = output_dir / image_path.name
-        self.output_txt_path = (image_dir / "tagged" / image_path.stem).with_suffix(".txt")
-        random_uuid = str(uuid4())
-        yield MoveImageToOutputFolder(file_path=self.file_path, output_path=self.output_path, uuid=random_uuid)
-        tags_kwargs = {
-            "file_path": self.file_path,
-            "output_path": self.output_path,
-            "output_txt_path": self.output_txt_path,
-            "uuid": random_uuid,
-        }
-        yield GetCameraTags(**tags_kwargs)
-        yield GetLensTags(**tags_kwargs)
-        yield AddPersonalTags(**tags_kwargs)
+        path_components = self.file_path.lower().split(".")
+        if path_components[-1] in IMAGE_TYPES:        
+            image_path = Path(self.file_path)
+            image_dir = image_path.parent
+            output_dir = image_dir / "tagged"
+            self.output_path = output_dir / image_path.name
+            self.output_txt_path = (image_dir / "tagged" / image_path.stem).with_suffix(".txt")
+            # today_str = date.today().strftime("%d-%m-%Y")
+            # self.output_txt_path = (image_dir / "tagged" / today_str).with_suffix(".txt")
+            random_uuid = str(uuid4())
+            tags_kwargs = {
+                "file_path": self.file_path,
+                "output_path": self.output_path,
+                "output_txt_path": self.output_txt_path,
+                "uuid": random_uuid,
+            }
+
+            yield GetCameraTags(**tags_kwargs)
+            yield GetLensTags(**tags_kwargs)
+            yield AddPersonalTags(**tags_kwargs)
 
     def run(self):
         path_components = self.file_path.lower().split(".")
