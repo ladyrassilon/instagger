@@ -26,9 +26,11 @@ def get_exif_data(file_path):
     return exif_data
 
 def convert_tags_to_hashtags(raw_tags):
-    hashtags = [f"#{tag}" for tag in raw_tags]
-    hashtag_text = " ".join(hashtags)
-    return hashtag_text
+    if "NotFound" not in raw_tags:
+        hashtags = [f"#{tag}" for tag in raw_tags]
+        hashtag_text = " ".join(hashtags)
+        return hashtag_text
+    return raw_tags
 
 
 class DownloadiCloud(luigi.Task):
@@ -88,9 +90,12 @@ class GetCameraTags(luigi.Task):
     def get_camera_model_tags(self, image_data):
         model_tags = []
         if "Model" in image_data:
-            model_data = CAMERAS[image_data["Model"]]
-            for section, tags in model_data.items():
-                model_tags.extend(tags)
+            try:
+                model_data = CAMERAS[image_data["Model"]]
+                for section, tags in model_data.items():
+                    model_tags.extend(tags)
+            except KeyError:
+                model_tags.append(f"CameraNotFound - [{image_data["Model"]}]")
         return model_tags
 
     def get_exposure_tags(self, image_data):
@@ -160,9 +165,12 @@ class GetLensTags(luigi.Task):
     def get_lens_model_data(self, image_data):
         lens_model_tags = []
         if "LensModel" in image_data:
-            model_data = LENSES[image_data["LensModel"]]
-            for section, tags in model_data.items():
-                lens_model_tags.extend(tags)
+            try:
+                model_data = LENSES[image_data["LensModel"]]
+                for section, tags in model_data.items():
+                    lens_model_tags.extend(tags)
+            except KeyError:
+                lens_model_tags.append(f"LensNotFound - [{image_data["LensModel"]}]")
         return lens_model_tags
 
     def requires(self):
