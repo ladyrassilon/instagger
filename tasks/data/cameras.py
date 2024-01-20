@@ -10,28 +10,28 @@ CAMERAS = {
         "manufacturer": ["sony"],
         "model_names": ["rx100", "sonyrx100", "rx100sony"],
         "sensorsize": ["1inch", "1inchsensor"],
-        "lensmount": ["fixed"],
+        "lensmount": [],
         "extra": ["compactcamera", "compact"]
     },
-    "DSC-RX100": {
+    "DSC-RX100M7": {
         "manufacturer": ["sony"],
         "model_names": ["rx1007", "sonyrx1007", "rx1007sony", "rx100VII"],
         "sensorsize": ["1inch", "1inchsensor"],
-        "lensmount": ["fixed"],
+        "lensmount": [],
         "extra": ["compactcamera", "compact"]
     },
     "ILCE-6000": {
         "manufacturer": ["sony"],
         "model_names": ["sonya6000", "a6000photography", "a6000sony", "a6000"],
         "sensorsize": ["apsc", "croppedsensor"],
-        "lensmount": ["fixed"],
+        "lensmount": ["emount"],
         "extra": ["mirrorless"],
     },
     "ILCE-6400": {
         "manufacturer": ["sony"],
         "model_names": ["sonya6400", "a6400photography", "a6400sony", "a6400"],
         "sensorsize": ["apsc", "croppedsensor"],
-        "lensmount": ["fixed"],
+        "lensmount": ["emount"],
         "extra": ["mirrorless"],
     },
     "iPhone XS": {
