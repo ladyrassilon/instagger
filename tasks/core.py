@@ -157,9 +157,6 @@ class GetLensTags(luigi.Task):
             focal_length = n_l / d_f
             actual_focal_length = f"{focal_length}mm".replace(".0", "").replace(".","_")
             focal_length_tags.append(actual_focal_length)
-            # if hasattr(image_data, "focal_length_in_35mm_film"):
-            #     equivalent_focal_length = f"{int(image_data.focal_length_in_35mm_film)}mm".replace(".0", "").replace(".","_")
-            #     focal_length_tags.append(equivalent_focal_length)
         return focal_length_tags
 
     def get_lens_model_data(self, image_data):
@@ -241,8 +238,6 @@ class ProcessImage(luigi.Task):
             output_dir = image_dir / "tagged"
             self.output_path = output_dir / image_path.name
             self.output_txt_path = (image_dir / "tagged" / image_path.stem).with_suffix(".txt")
-            # today_str = date.today().strftime("%d-%m-%Y")
-            # self.output_txt_path = (image_dir / "tagged" / today_str).with_suffix(".txt")
             random_uuid = str(uuid4())
             tags_kwargs = {
                 "file_path": self.file_path,
