@@ -12,7 +12,6 @@ import piexif
 from .data.cameras import CAMERAS
 from .data.lenses import LENSES
 
-# from luigi.mock import MockFileSystem
 
 def get_exif_data(file_path):
     exif_data = {}
@@ -24,6 +23,7 @@ def get_exif_data(file_path):
             else:
                 exif_data[piexif.TAGS[ifd][tag]["name"]] = exif_dict[ifd][tag]
     return exif_data
+
 
 def convert_tags_to_hashtags(raw_tags):
     if "NotFound" not in raw_tags:
@@ -271,31 +271,3 @@ class ProcessImage(luigi.Task):
 
     def output(self):
         return luigi.LocalTarget(self.output_txt_path)
-
-
-IMAGE_TYPES = ["jpg", "jpeg", "heic"]
-
-
-class OpenImageTest(luigi.Task):
-    file_path = luigi.Parameter()
-    def run(self):
-        path_components = self.file_path.lower().split(".")
-        if path_components[-1] in IMAGE_TYPES:
-            exif_data = {}
-            exif_dict = piexif.load(self.file_path)
-            for ifd in ("0th", "Exif", "GPS", "1st"):
-                for tag in exif_dict[ifd]:
-                    exif_data[piexif.TAGS[ifd][tag]["name"]] = exif_dict[ifd][tag]
-            with self.output().open("w") as output_file:
-                output_text = f"""
-    {image_data.exposure_time}
-    {image_data.lens_model}
-    {image_data.model}
-    {image_data.focal_length}
-    {image_data.f_number}
-                """
-                output_file.write(output_text)
-
-    def output(self):
-        output_text_file_path = self.file_path.replace(".jpg", ".txt")
-        return luigi.LocalTarget(output_text_file_path)
