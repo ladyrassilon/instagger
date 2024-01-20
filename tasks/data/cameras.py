@@ -50,5 +50,12 @@ CAMERAS = {
     },
     "EZ Controller": {
 
+    },
+    "FC7303": {
+        "manufacturer": ["dji"],
+        "model_names": ["djimini2"],
+        "sensorsize": [],
+        "lensmount": [],
+        "extra": ["minidrone", "dronephotography", "dronephoto"]
     }
 }

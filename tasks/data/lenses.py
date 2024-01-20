@@ -154,6 +154,12 @@ LENSES = {
         "mount": ["emount"],
         "features": ["superzoom", "supertelephoto", "variableaperture", "vibrationcompensation", "stabilisedlens"],
     },
+    '20.7 mm': {
+        "manufacturer": ["dji"],
+        "name": [],
+        "mount": [],
+        "features": ["wideangle"]
+    }
 }
 
 LENSES["Sony E PZ 18-105mm F4.0 OSS"] = LENSES["E PZ 18-105mm F4 G OSS"]
