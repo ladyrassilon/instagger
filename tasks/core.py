@@ -4,6 +4,7 @@ import shutil
 import time
 from datetime import date
 from pathlib import Path
+from random import choice
 from uuid import uuid4
 
 import luigi
@@ -93,7 +94,8 @@ class GetCameraTags(luigi.Task):
             try:
                 model_data = CAMERAS[image_data["Model"]]
                 for section, tags in model_data.items():
-                    model_tags.extend(tags)
+                    if tags:
+                        model_tags.append(choice(tags))
             except KeyError:
                 model_tags.append(f"CameraNotFound - [{image_data["Model"]}]")
         return model_tags
@@ -165,7 +167,8 @@ class GetLensTags(luigi.Task):
             try:
                 model_data = LENSES[image_data["LensModel"]]
                 for section, tags in model_data.items():
-                    lens_model_tags.extend(tags)
+                    if tags:
+                        lens_model_tags.append(choice(tags))
             except KeyError:
                 lens_model_tags.append(f"LensNotFound - [{image_data["LensModel"]}]")
         return lens_model_tags
